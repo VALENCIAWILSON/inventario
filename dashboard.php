@@ -1,0 +1,1 @@
+<?php require 'config.php';if(!is_logged_in()){header('Location:index.php');exit;} require 'header.php';?><?php if(is_admin()):?><a href='users.php'>Gestionar usuarios</a><?php endif;?><a href='articles.php'>Gestionar artículos</a><?php require 'footer.php';?>
