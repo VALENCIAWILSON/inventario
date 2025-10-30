@@ -4,7 +4,7 @@ session_start();
 $db_host = 'mysql-wilsonv.alwaysdata.net';
 $db_user = 'wilsonv';
 $db_pass = 'Misifu123+'; // actualizar si aplica
-$db_name = "wilsonv_inventario;
+$db_name = "wilsonv_inventario";
 
 $conn = new mysqli($db_host, $db_user, $db_pass, $db_name);
 if ($conn->connect_error) {
