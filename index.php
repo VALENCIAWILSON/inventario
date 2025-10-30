@@ -1,1 +1,43 @@
-<?php require 'config.php';if(is_logged_in()){header('Location:dashboard.php');exit;} $err=''; if($_SERVER['REQUEST_METHOD']==='POST'){ $ced=trim($_POST['cedula']);$pass=$_POST['password'];$st=$pdo->prepare('SELECT * FROM users WHERE cedula=?');$st->execute([$ced]);$u=$st->fetch();if($u&&password_verify($pass,$u['password'])){$_SESSION['cedula']=$u['cedula'];$_SESSION['nombre']=$u['nombre'];header('Location:dashboard.php');exit;}else{$err='Credenciales inválidas';}} require 'header.php';?> <h2>Iniciar sesión</h2><?php if($err):?><p><?php echo $err;?></p><?php endif;?><form method='post'><label>Cédula<input name='cedula'></label><label>Contraseña<input type='password' name='password'></label><button>Entrar</button></form><?php require 'footer.php';?>
+<?php
+require 'config.php';
+
+if (isset($_POST['cedula'], $_POST['password'])) {
+    $cedula = trim($_POST['cedula']);
+    $password = $_POST['password'];
+
+    $stmt = $conn->prepare("SELECT cedula,nombre,password FROM users WHERE cedula = ?");
+    $stmt->bind_param('s', $cedula);
+    $stmt->execute();
+    $res = $stmt->get_result();
+    $user = $res->fetch_assoc();
+    $stmt->close();
+
+    if ($user && $user['password'] === $password) {
+        $_SESSION['cedula'] = $user['cedula'];
+        $_SESSION['nombre'] = $user['nombre'];
+        // Admin sólo si cedula 1111 y password 1234
+        if ($user['cedula'] === '1111' && $password === '1234') {
+            header('Location: dashboard.php');
+            exit;
+        } else {
+            header('Location: articles.php');
+            exit;
+        }
+    } else {
+        $error = 'Credenciales inválidas';
+    }
+}
+?>
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Login</title></head>
+<body>
+<h2>Login</h2>
+<?php if (!empty($error)) echo "<p style='color:red;'>$error</p>"; ?>
+<form method="post">
+    Cédula: <input name="cedula" required><br>
+    Contraseña: <input name="password" type="password" required><br>
+    <button type="submit">Entrar</button>
+</form>
+</body>
+</html>
